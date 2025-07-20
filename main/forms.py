@@ -39,3 +39,29 @@ class EventAdressForm(forms.ModelForm):
             'complement': forms.TextInput(attrs={'class': 'input-field'}),
             'cep': forms.TextInput(attrs={'class': 'input-field'}),
         }
+
+class SectorForm(forms.ModelForm):
+    class Meta:
+        model = Sector
+        fields = ['title', 'max_capacity', 'status']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'input-field'}),
+            'max_capacity': forms.NumberInput(attrs={'class': 'input-field'}),
+            'status': forms.Select(attrs={'class': 'input-field'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop('event', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        max_capacity = cleaned_data.get('max_capacity')
+        if self.instance.pk:
+            setores = Sector.objects.filter(Event_id=self.instance.Event_id).exclude(pk=self.instance.pk)
+        else:
+            setores = Sector.objects.filter(Event_id=self.event)
+
+        soma = sum(s.max_capacity for s in setores)
+        if self.event and max_capacity and soma + max_capacity > self.event.max_capacity:
+            self.add_error('max_capacity', 'Capacidade total dos setores excede a capacidade máxima do evento.')

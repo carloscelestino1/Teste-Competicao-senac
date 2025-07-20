@@ -80,32 +80,55 @@
 
 <div id="config">
     <header>
-        <a href="{% url 'events_list' %}">
-            <img src="{% static 'icons/back.svg' %}" alt="Voltar">
-        </a>
-        <h1>Configurar Evento</h1>
+        <h1>Configurações do Evento:</h1>
     </header>
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="form-flex-wrapper">
+            <!-- Card 1: Evento -->
             <div class="card">
                 <h2>Dados do Evento</h2>
                 {{ event_form.as_p }}
             </div>
 
+            <!-- Card 2: Endereço -->
             <div class="card">
                 <h2>Endereço do Evento</h2>
                 {{ address_form.as_p }}
             </div>
+
+            <!-- Card 3: Setores -->
+            {% if not creating %}
+            <!-- Card 3: Setores -->
+            <div class="card">
+                <h2>Setores do Evento</h2>
+                <ul style="padding-left: 1rem;">
+                    {% for sector in sectors %}
+                        <li>
+                            {{ sector.title }} ({{ sector.max_capacity }} vagas)
+                            <a href="{% url 'edit_sector' sector.id %}">✏️</a>
+                            <a href="{% url 'delete_sector' sector.id %}" onclick="return confirm('Deseja remover este setor?')">🗑️</a>
+                        </li>
+                    {% empty %}
+                        <li>Nenhum setor cadastrado.</li>
+                    {% endfor %}
+                </ul>
+                {% if event_form.instance.pk %}
+                    <a href="{% url 'create_sector' event_form.instance.pk %}" class="form-button">+ Adicionar Setor</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
         </div>
+
 
         <button type="submit" class="form-button">Salvar</button>
     </form>
 
 
-    {% if event_form.instance.pk %}
+    {% if event_form.instance.pk and not creating %}
         <div class="delete-button-wrapper">
             <a href="{% url 'delete_event' event_form.instance.pk %}" class="delete-button" onclick="return confirm('Tem certeza que deseja excluir este evento?');">
                 Excluir Evento

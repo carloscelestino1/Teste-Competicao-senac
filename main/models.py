@@ -29,34 +29,33 @@ class EventAdress(models.Model):
         return f"{self.street}, {self.number} - {self.city}/{self.uf}"
 
     
-class Sector (models.Model):
+from django.core.exceptions import ValidationError
+
+class Sector(models.Model):
+    STATUS_CHOICES = [
+        ('available', 'Disponível'),
+        ('reserved', 'Reservado'),
+        ('unavailable', 'Indisponível'),
+    ]
+
     title = models.CharField(max_length=60)
     max_capacity = models.IntegerField()
-    status = models.CharField(max_length=50, default="available")
+    status = models.CharField(
+        max_length=50,
+        choices=STATUS_CHOICES,
+        default='available'
+    )
     Event_id = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     def __str__(self):
-        id = str(self.Event_id)
-        title = str(self.title)
-        sector_title = id + '_' +title
-        return sector_title
-    
-class Seat (models.Model):
-    number = models.IntegerField()
-    row = models.CharField(max_length=1)
-    status = models.CharField(max_length=50, default="Available")
-    Sector_id = models.ForeignKey(Sector, on_delete=models.CASCADE)
+        return f"{self.Event_id}_{self.title}"
 
-    def __str__(self):
-        event_sector = str(self.Sector_id)
-        row = str(self.row)
-        number = str(self.number)
-        seat = event_sector + '_' + row + number
-        return seat
+
+
+    
     
 class Ticket (models.Model):
     ticket_code = models.CharField(max_length=36)
-    Seat_id = models.ForeignKey(Seat, on_delete=models.CASCADE)
     Event_id = models.ForeignKey(Event, on_delete=models.CASCADE)
     User_cpf = models.CharField(max_length=50)
 
