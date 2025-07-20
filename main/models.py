@@ -29,8 +29,6 @@ class EventAdress(models.Model):
         return f"{self.street}, {self.number} - {self.city}/{self.uf}"
 
     
-from django.core.exceptions import ValidationError
-
 class Sector(models.Model):
     STATUS_CHOICES = [
         ('available', 'Disponível'),
@@ -49,7 +47,6 @@ class Sector(models.Model):
 
     def __str__(self):
         return f"{self.Event_id}_{self.title}"
-
 
 
 class Ticket(models.Model):

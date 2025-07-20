@@ -164,49 +164,45 @@ class SectorDeleteView(LoginRequiredMixin, DeleteView):
         return reverse_lazy('edit_event', kwargs={'event_id': self.object.Event_id.id})
 
 
+class VendaIngressosView(LoginRequiredMixin, View):
+    template_name = 'main/event.html'
 
+    def get_event_and_setores(self, event_id):
+        event = get_object_or_404(Event, id=event_id)
+        setores = Sector.objects.filter(Event_id=event)
 
+        vendidos_por_setor = {
+            setor.id: Ticket.objects.filter(Event_id=event, sector_id=setor.id).count()
+            for setor in setores
+        }
 
+        capacidade_disponivel = {
+            setor.id: setor.max_capacity - vendidos_por_setor.get(setor.id, 0)
+            for setor in setores
+        }
 
+        return event, setores, capacidade_disponivel
 
+    def get(self, request, event_id):
+        event, setores, capacidade_disponivel = self.get_event_and_setores(event_id)
 
+        context = {
+            'event': event,
+            'setores': setores,
+            'disponibilidades': capacidade_disponivel
+        }
+        return render(request, self.template_name, context)
 
+    def post(self, request, event_id):
+        event, setores, capacidade_disponivel = self.get_event_and_setores(event_id)
 
-
-
-
-
-
-
-
-
-
-
-@login_required
-def venda_ingressos(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    setores = Sector.objects.filter(Event_id=event)
-
-    # Quantos ingressos já foram vendidos por setor
-    vendidos_por_setor = {
-        setor.id: Ticket.objects.filter(Event_id=event, sector_id=setor.id).count()
-        for setor in setores
-    }
-
-    capacidade_disponivel = {
-        setor.id: setor.max_capacity - vendidos_por_setor.get(setor.id, 0)
-        for setor in setores
-    }
-
-
-    if request.method == 'POST':
         for setor in setores:
             quantidade = int(request.POST.get(f'setor_{setor.id}', 0))
             capacidade = capacidade_disponivel[setor.id]
+
             if quantidade > capacidade:
-                continue  # você pode adicionar uma mensagem de erro aqui
-            
-            # Cria os tickets
+                continue  # aqui você pode adicionar mensagens de erro com messages.error
+
             for _ in range(quantidade):
                 Ticket.objects.create(
                     ticket_code=uuid.uuid4(),
@@ -214,24 +210,12 @@ def venda_ingressos(request, event_id):
                     User_cpf=request.user.username,
                     sector_id=setor.id
                 )
-        return redirect('venda_ingressos', event_id=event.id)
 
-    return render(request, 'main/event.html', {
-        'event': event,
-        'setores': setores,
-        'disponibilidades': capacidade_disponivel
-    })
+        return redirect('venda_ingressos', event_id=event.id)
 
 
 
 #---------------------------------
-
-
-def EventView(request):
-    return render(request, 'main/event.html')
-
-def LoginView(request):
-    return render(request, 'login.html')
 
 
 def EventDashboardView(request):

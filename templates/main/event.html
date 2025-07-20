@@ -21,11 +21,18 @@
             </li>
             <li class="desc-list">
                 <img src="{% static 'icons/clock.svg' %}" alt="">
-                <span>{{ event.time }}</span>
+                <span>{{ event.start_at }}</span>
             </li>
             <li class="desc-list">
                 <img src="{% static 'icons/map-pin.svg' %}" alt="">
-                <span>{{ event.location }}</span>
+                {% if event.eventadress %}
+                    <span>
+                        {{ event.eventadress.street }}, {{ event.eventadress.number }} - 
+                        {{ event.eventadress.neighborhood }}, {{ event.eventadress.city }}/{{ event.eventadress.uf }}
+                    </span>
+                {% else %}
+                    <span>Local não informado</span>
+                {% endif %}
             </li>
             <li class="desc-list">
                 <img src="{% static 'icons/people.svg' %}" alt="">
@@ -37,7 +44,7 @@
     <!-- Imagem promocional -->
     <section class="promo-image" id="promo-image">
         <div>
-            <img src="{% static 'promo-image.svg' %}" alt="">
+            <img src="{{ event.image.url }}" alt="{{ event.title }}">
         </div>
     </section>
 
@@ -81,7 +88,6 @@
                     <div class="area {% if disponibilidades|get_item:setor.id == 0 %}esgotado{% endif %}">
                         <div class="flex flex-area" style="justify-content: space-between;">
                             <span>{{ setor.title }}</span>
-                            <span>{{ disponibilidades|get_item:setor.id }}</span>
                         </div>
                     </div>
                 {% endfor %}
