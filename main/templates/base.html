@@ -1,0 +1,66 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Competições Senac {% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'styles/base.css' %}">
+</head>
+<body>
+    <header>
+        <div>
+            <nav class="grid grid-flow-col">
+                <div>
+                    <a href="http://127.0.0.1:8000/">
+                        <img src="{% static 'icons/logo-white.svg' %}" alt="">
+                    </a>
+                </div>
+                <div class="header-right">
+                    <a href="http://127.0.0.1:8000/event-config">
+                        <span>Configurar Evento</span>
+                    </a>
+                    <span>|</span>
+                    <a href="http://127.0.0.1:8000/dashboard">
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="">
+                        <img src="{% static 'icons/profile-icon.svg' %}" alt="">
+                    </a>
+                </div>
+                <div class="header-right-2">
+                    <a href="http://127.0.0.1:8000/event-config">
+                        <img src="{% static 'icons/config.svg' %}" alt="">
+                    </a>
+                    <a href="http://127.0.0.1:8000/dashboard">
+                        <img src="{% static 'icons/graph.svg' %}" alt="">
+                    </a>
+                    <a href="#">
+                        <img src="{% static 'icons/profile-icon.svg' %}" alt="">
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <main class="container grid">
+        <div>
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+    <aside>
+        <div class="grid grid-flow-row">
+            <img src="{% static 'icons/accessibility.svg' %}" alt="">
+        </div>
+    </aside>
+    <footer>
+
+    </footer>
+</body>
+</html>

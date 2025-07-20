@@ -1,0 +1,235 @@
+@import url(../global.css);
+
+.grid-container-3 {
+    grid-template-areas: 
+    'bignum bignum piechart piechart'
+    'bignum bignum piechart piechart'
+    'map map piechart piechart'
+    'map map columnchart columnchart'
+    'map map columnchart columnchart'
+    'map map columnchart columnchart'
+    ;
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 0.5rem;
+}
+
+@media (max-width: 48rem) {
+    .grid-container-3 {
+        grid-template-areas:
+        'bignum'
+        'map'
+        'piechart'
+        'columnchart'
+        ;
+        grid-template-columns: 1fr;
+    }
+}
+
+#bignum {
+    grid-area: bignum;
+    /* background-color: chartreuse; */
+}
+
+#piechart {
+    grid-area: piechart;
+    /* background-color: deeppink; */
+}
+
+#map {
+    grid-area: map;
+    /* background-color: darkgoldenrod; */
+}
+
+#columnchart {
+    grid-area: columnchart;
+    /* background-color: blue; */
+}
+
+header {
+    gap: 1rem;
+
+    & h1 {
+        text-decoration: none;
+        color: black;
+        font: 400 2.5rem/1.0 var(--font-family)
+    }
+}
+
+#bignum {
+    width: auto;
+    max-width: 20rem;
+    margin-inline: auto;
+    margin-bottom: 2rem;
+    
+    & .cards-wrapper {
+        justify-content: center;
+        gap: 5rem;
+    }
+
+    & .card {
+        border: 0.15rem solid #1331A1;
+        border-radius: 1rem;
+        background-color: var(--bg-color);
+        padding: 3rem 2rem;
+
+        width: 100%;
+        max-width: 10rem;
+        max-height: 10rem;
+
+        margin-top: 1rem;
+        margin-inline: auto;
+        
+        justify-content: center;
+
+        font: 800 2.5rem/1.0 var(--font-family)
+    }
+
+    & .available-tickets {
+        & > .card {
+            color: #00CA07;
+        }
+    }
+
+    & .reserved-tickets {
+        & > .card {
+            color: #F44528;
+        }
+    }
+}
+
+#pie {
+    height: auto;
+    max-height: 20rem; 
+
+    width: auto;
+    max-width: 20rem;
+
+    margin-inline: auto;
+}
+
+#columnchart {
+    height: auto;
+    max-height: 25rem;
+    margin-top: 5rem;
+
+    width: auto;
+    max-width: 40rem;
+
+    margin-inline: 1rem;
+}
+
+.grid-container-2 {
+    grid-template-areas: 
+    'track track track track track track track'
+    'track track track track track track track'
+    'track track track track track track track'
+    'track track track track track track track'
+    'track track track track track track track'
+    'side-1 side-1 front front front side-2 side-2'
+    'side-1 side-1 front front front side-2 side-2'
+    'side-1 side-1 front front front side-2 side-2'
+    'side-1 side-1 stage stage stage side-2 side-2'
+    'side-1 side-1 stage stage stage side-2 side-2'
+    ;
+
+    gap: 0.5rem;
+
+    & > .area {
+        background-color: #7EFF7E;
+        border-radius: 0.7rem;
+
+        align-content: end;
+
+        &:hover {
+            background-color: #FDB47C;
+        }
+
+        &:focus {
+            background-color: #FDB47C;
+        }
+    }
+}
+
+.track {
+    grid-area: track;
+    height: 12rem;
+    box-shadow: 0.2rem 0.2rem 0.1rem lightgray;
+}
+
+.side-1 {
+    grid-area: side-1;
+    height: 11rem;
+    box-shadow: 0.2rem 0.2rem 0.1rem lightgray;
+}
+
+.side-2 {
+    grid-area: side-2;
+    height: 11rem;
+    box-shadow: 0.2rem 0.2rem 0.1rem lightgray;
+}
+
+.stage {
+    grid-area: stage;
+    height: 3rem;
+    box-shadow: 0.2rem 0.2rem 0.1rem lightgray;
+}
+
+.front {
+    grid-area: front;
+    height: 7.5rem;
+    box-shadow: 0.2rem 0.2rem 0.1rem lightgray;
+}
+
+#map {
+    & .sectors-map-wrapper {
+        display: flex;
+        flex-flow: column;
+
+        font: 400 1.2rem/1.0 var(--font-family);
+
+        background-color: var(--bg-color);
+        border: solid 0.15rem #1331A1;
+        box-shadow: 0.2rem 0.2rem 0.1rem lightgray;
+        justify-content: space-between;
+
+        height: 28rem;
+        margin: 1rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+    }
+
+    & .status-wrapper {
+        border-top: 0.15rem solid #1331A1;
+        padding: 0.5rem;
+
+        gap: 4rem;
+        justify-content: center;
+    }
+
+    & .front {
+        padding: 0;
+        flex-flow: column;
+        justify-content: space-between;
+
+        & img {
+            height: 2rem;
+        }
+
+        & .accessibility-wrapper {
+            justify-content: space-between;
+        }
+    }
+
+    & .flex-area {
+            padding: 0.5rem;
+            justify-content: space-between;
+        }
+
+    & .stage {
+        background-color: #000000;
+        color: #FFFFFF;
+        align-content: center;
+        text-align: center;
+    }
+}

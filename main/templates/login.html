@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Competições Senac {% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'styles/login.css' %}">
+</head>
+<body>
+    <div id="app">
+        <main>
+            <h1>
+                Faça seu login
+            </h1>
+
+            <form action="post" enctype="multipart/form-data">
+                <div class="login-container">
+                    <fieldset class="login-credentials">
+                        <div class="input-wrapper">
+                            <label for="credential">
+                                Insira seu CPF ou E-mail:
+                            </label>
+                            <input type="text" id="credential" name="credential" placeholder="CPF ou E-mail">
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="password">
+                                Senha:
+                            </label>
+                            <input type="password" name="password" id="password" placeholder="Senha" minlength="8">
+                        </div>
+                    </fieldset>
+                </div>
+                
+                <fieldset class="stay-conected">
+                    <div>
+                        <input type="checkbox" id="stay-conected">
+                        <label for="stay-conected">Mantenha-me conectado</label>
+                    </div>
+                    <!-- Deixa pra depois, isso talvez não dê tempo -->
+                    <div>
+                        <a href="#">Esqueci minha senha</a>
+                    </div>
+                </fieldset>
+                <button>
+                    Logar
+                </button>
+            </form>
+        </main>
+        <aside>
+            <img src="{% static 'login-image.jpg' %}" alt="">
+        </aside>
+    </div>
+</body>
+</html>

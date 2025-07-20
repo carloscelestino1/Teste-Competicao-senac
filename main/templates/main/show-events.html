@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'styles/main/show-events.css' %}">
+
+    <main class="container grid grid-flow-row">
+        <div id="promo-image">
+            <a href="http://127.0.0.1:8000/event">
+                <img src="{% static 'promo-image.svg' %}" alt="">
+            </a>
+        </div>
+        <div id="event-info">
+            <a href="http://127.0.0.1:8000/event">
+                <div class="title">
+                    Liza - O Grande Show
+                </div>
+            </a>
+            <div class="event-info-wrapper">
+                <div>
+                    <img src="{% static 'icons/map-pin.svg' %}" alt="">
+                    <span>Brasília, DF</span>
+                </div>
+                <div>
+                    <img src="{% static 'icons/calendar.svg' %}" alt="">
+                    <span>Data e Hora</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

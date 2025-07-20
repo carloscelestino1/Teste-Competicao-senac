@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --font-family: "Schibsted Grotesk", sans-serif;
+    --bg-color: #E2E8FF;
+}
+
+body {
+    background-color: white;
+    font: 400 1.5rem/1.0 var(--font-family);
+    color: black;
+}
+
+.grid {
+    display: grid;
+}
+
+.grid-flow-col {
+    grid-auto-flow: column;
+}
+
+.grid-flow-row {
+    grid-auto-flow: row;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-flow-column {
+    flex-flow: column;
+}
+
+.container {
+    max-width: 90rem;
+    padding-inline: 1rem;
+    margin-inline: auto;
+}
+
+main {
+    margin-block: 1.5rem;
+}

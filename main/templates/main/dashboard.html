@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'styles/main/dashboard.css' %}">
+
+    <body>
+        <header class="flex">
+            <a href="http://127.0.0.1:8000/">
+                <img src="{% static 'icons/back.svg' %}" alt="">
+            </a>
+            <h1>
+                Dashboard:
+            </h1>
+        </header>
+        <main class="container grid grid-container-3">
+            <section id="bignum">
+                <div class="cards-wrapper flex">
+                    <div class="available-tickets flex flex-flow-column">
+                        <div>
+                            Ingressos Disponíveis
+                        </div>
+                        <div class="card flex">
+                            2800
+                        </div>
+                    </div>
+                    <div class="reserved-tickets flex flex-flow-column">
+                        <div>
+                            Ingressos Reservados
+                        </div>
+                        <div class="card flex">
+                            2200
+                        </div>
+                    </div>
+                </div>
+                
+            </section>
+
+            <section id="piechart">
+                <div>
+                    <canvas id="pie"></canvas>
+                </div>
+                
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                <script>
+                    const ctx2 = document.getElementById('pie');
+
+                    const data = {
+                        labels: [
+                            '% Disponíveis',
+                            '% Reservados',
+                        ],
+                        datasets: [{
+                            label: 'Porcentagem',
+                            data: [55, 45],
+                            backgroundColor: [
+                            '#00CA07',
+                            '#F44528'
+                            ],
+                            hoverOffset: 4
+                        }]
+                    };
+
+                        const config = {
+                            type: 'doughnut',
+                            data: data,
+                        };
+
+                    new Chart(ctx2, config);
+                </script>
+                
+            </section>
+
+            <section id="map">
+                <div class="sectors-map-wrapper">
+                    <div class="grid grid-container-2">
+                        <div class="track area">
+                            <div class="flex flex-area">
+                                <span>Plateia central</span>
+                                <span>3000</span>
+                            </div>
+                        </div>
+                        <div class="side-2 area">
+                            <div class="flex flex-area">
+                                <span>Área lateral 2</span>
+                                <span>700</span>                               
+                            </div>
+                        </div>
+                        <div class="side-1 area">
+                            <div class="flex flex-area">
+                                <span>Área lateral 1</span>
+                                <span>700</span>
+                            </div>
+                        </div>
+                        <div class="front flex area">
+                            <div class="accessibility-wrapper flex">
+                                <img src="{% static 'icons/accessibility.svg' %}" alt="">
+                                <img src="{% static 'icons/accessibility.svg' %}" alt="">
+                            </div>
+                            <div class="flex flex-area">
+                                <span>Área VIP</span>
+                                <span>600</span>
+                            </div>
+                        </div>
+                        <div class="stage area">
+                            Palco
+                        </div>
+                    </div>
+                    <div class="flex status-wrapper">
+                        <div>
+                            <img src="{% static 'icons/green-circle.svg' %}" alt="">
+                            <span>Disponível</span>
+                        </div>
+                        <div>
+                            <img src="{% static 'icons/gray-circle.svg' %}" alt="">
+                            <span>Esgotado</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="columnchart">
+                <div>
+                    <canvas id="column"></canvas>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                <script>
+                const ctx = document.getElementById('column');
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                    labels: ['Plateia central', 'Área lateral 1', 'Área VIP', 'Área lateral 2'],
+                    datasets: [{
+                        label: '% de Vendas por Setor',
+                        data: [80, 19, 52, 27],
+                        backgroundColor: '#F44528',
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                    scales: {
+                        y: {
+                        beginAtZero: true,
+                        max: 100
+                        }
+                    }
+                   }
+                });
+                </script>
+            </section>
+        </main>
+
+    </body>
+
+{% endblock %}

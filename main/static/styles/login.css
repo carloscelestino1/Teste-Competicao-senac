@@ -1,0 +1,96 @@
+@import url(global.css);
+#app {
+    display: grid;
+    grid-template-columns: 60% 40%;
+
+    height: 100vh;
+}
+
+@media (max-width: 48rem) {
+  #app {
+    grid-template-columns: 1fr; /* só o formulário */
+  }
+
+  aside {
+    display: none;
+  }
+}
+
+main {
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-inline: auto;
+    margin-top: 10%;
+    /* background-color: aqua; */
+}
+
+h1 {
+    text-align: center;
+    color: #1331A1;
+}
+
+aside {
+    & img {
+        width: 100%;
+        height: 100vh;
+        object-fit: cover;
+    }
+}
+
+form {
+    display: grid;
+    margin-top: 10rem;
+
+    & button {
+        all: unset;
+        margin-top: 10rem;
+        margin-inline: auto;
+
+        color: #FFFFFF;
+        background-color: #1331A1;
+        border: 0.1rem solid #1331A1;
+        border-radius: 5rem;
+        padding: 1.5rem 8rem;
+    }
+}
+
+fieldset {
+    border: none;
+}
+
+fieldset +  fieldset {
+    margin-top: 2rem;
+}
+
+.login-credentials {
+    display: flex;
+    flex-flow: column;
+    max-width: 90%;
+
+    & label {
+        margin: 1rem;
+    }
+
+    & input {
+        appearance: none;
+        width: 100%;
+        max-width: 32rem;
+        border-radius: 0.5rem;
+        border: 0.1rem solid transparent;
+        outline: 0.15rem solid #1331A1;
+
+        margin: 0.5rem 1rem;
+        padding: 1rem;
+    }
+}
+
+.stay-conected {
+    display: flex;
+    justify-content: space-between;
+
+    margin: 0;
+    margin-inline: 1.5rem;
+
+
+    font: 400 1rem/1.0 var(--font-family);
+}
