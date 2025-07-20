@@ -1,18 +1,6 @@
 from django.db import models
-
-class User (models.Model):
-    cpf = models.CharField(max_length=14, primary_key=True)
-    username = models.CharField(max_length=255)
-    email = models.EmailField()
-    phone = models.CharField(max_length=15)
-    role = models.CharField(default="Client")
-    password = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.username
     
-class Event (models.Model):
+class Event(models.Model):
     title = models.CharField(max_length=255)
     max_capacity = models.IntegerField()
     description = models.TextField()
@@ -20,13 +8,15 @@ class Event (models.Model):
     date = models.DateField()
     status = models.CharField(max_length=50, default="Active")
     created_at = models.DateTimeField(auto_now_add=True)
-    User_cpf = models.ForeignKey(User, on_delete=models.CASCADE)
+    User_cpf = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='event_images/', null=True, blank=True)  # novo campo
 
     def __str__(self):
         return self.title
 
-class EventAdress (models.Model):
-    Event_id = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+class EventAdress(models.Model):
+    event = models.OneToOneField(Event, on_delete=models.CASCADE, null=True)
     uf = models.CharField(max_length=2)
     city = models.CharField(max_length=60)
     neighborhood = models.CharField(max_length=60)
@@ -36,8 +26,8 @@ class EventAdress (models.Model):
     cep = models.CharField(max_length=9)
 
     def __str__(self):
-        id = str(self.Event_id)
-        return id
+        return f"{self.street}, {self.number} - {self.city}/{self.uf}"
+
     
 class Sector (models.Model):
     title = models.CharField(max_length=60)
@@ -68,7 +58,7 @@ class Ticket (models.Model):
     ticket_code = models.CharField(max_length=36)
     Seat_id = models.ForeignKey(Seat, on_delete=models.CASCADE)
     Event_id = models.ForeignKey(Event, on_delete=models.CASCADE)
-    User_cpf = models.ForeignKey(User, on_delete=models.CASCADE)
+    User_cpf = models.CharField(max_length=50)
 
     def __str__(self):
         return self.ticket_code

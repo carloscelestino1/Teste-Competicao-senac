@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'styles/main/event-config.css' %}">
+<style>
+    #config {
+        padding: 2rem;
+    }
+
+    .form-flex-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .card {
+        background-color: #ffffff;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        flex: 1 1 48%;
+        min-width: 320px;
+        box-sizing: border-box;
+    }
+
+    .card h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 18px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 8px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .form-button:hover {
+        background-color: #0056b3;
+    }
+
+    .delete-button-wrapper {
+        margin-top: 30px;
+    }
+
+    .delete-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background-color: #dc3545;
+        color: #fff;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+    .delete-button:hover {
+        background-color: #b02a37;
+    }
+
+    .delete-button img {
+        width: 18px;
+        height: 18px;
+    }
+</style>
+
+<div id="config">
+    <header>
+        <a href="{% url 'events_list' %}">
+            <img src="{% static 'icons/back.svg' %}" alt="Voltar">
+        </a>
+        <h1>Configurar Evento</h1>
+    </header>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-flex-wrapper">
+            <div class="card">
+                <h2>Dados do Evento</h2>
+                {{ event_form.as_p }}
+            </div>
+
+            <div class="card">
+                <h2>Endereço do Evento</h2>
+                {{ address_form.as_p }}
+            </div>
+        </div>
+
+        <button type="submit" class="form-button">Salvar</button>
+    </form>
+
+
+    {% if event_form.instance.pk %}
+        <div class="delete-button-wrapper">
+            <a href="{% url 'delete_event' event_form.instance.pk %}" class="delete-button" onclick="return confirm('Tem certeza que deseja excluir este evento?');">
+                Excluir Evento
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
