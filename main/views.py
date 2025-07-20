@@ -8,6 +8,31 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
+import uuid
+
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import Event, Sector, Ticket
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, get_object_or_404
+from .models import Event
+
+@login_required
+def event_router_view(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if request.user.groups.filter(name__iexact='vendedor').exists():
+        return redirect('venda_ingressos', event_id=event.id)
+    
+    return redirect('edit_event', event_id=event.id)
+
+
+
+
 
 # CRUD de Eventos
 
@@ -141,6 +166,61 @@ class SectorDeleteView(LoginRequiredMixin, DeleteView):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@login_required
+def venda_ingressos(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    setores = Sector.objects.filter(Event_id=event)
+
+    # Quantos ingressos já foram vendidos por setor
+    vendidos_por_setor = {
+        setor.id: Ticket.objects.filter(Event_id=event, sector_id=setor.id).count()
+        for setor in setores
+    }
+
+    capacidade_disponivel = {
+        setor.id: setor.max_capacity - vendidos_por_setor.get(setor.id, 0)
+        for setor in setores
+    }
+
+
+    if request.method == 'POST':
+        for setor in setores:
+            quantidade = int(request.POST.get(f'setor_{setor.id}', 0))
+            capacidade = capacidade_disponivel[setor.id]
+            if quantidade > capacidade:
+                continue  # você pode adicionar uma mensagem de erro aqui
+            
+            # Cria os tickets
+            for _ in range(quantidade):
+                Ticket.objects.create(
+                    ticket_code=uuid.uuid4(),
+                    Event_id=event,
+                    User_cpf=request.user.username,
+                    sector_id=setor.id
+                )
+        return redirect('venda_ingressos', event_id=event.id)
+
+    return render(request, 'main/event.html', {
+        'event': event,
+        'setores': setores,
+        'disponibilidades': capacidade_disponivel
+    })
 
 
 

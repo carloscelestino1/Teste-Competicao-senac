@@ -104,7 +104,7 @@
             <div class="carousel">
                 {% for event in events_list %}
                     <div class="carousel-item">
-                        <a href="{% url 'edit_event' event.id %}">
+                        <a href="{% url 'event_router' event.id %}">
                             {% if event.image %}
                                 <img src="{{ event.image.url }}" alt="{{ event.title }}">
                             {% else %}

@@ -1,183 +1,123 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
+
+
+{% block title %}Venda de Ingressos - {{ event.title }}{% endblock %}
 
 {% block content %}
-    <link rel="stylesheet" href="{% static 'styles/main/event.css' %}">
+<link rel="stylesheet" href="{% static 'styles/main/event.css' %}">
 
-    <body>
-        <main class="grid container grid-container-1">
-            <section class="description" id="description">
-                <div class="title">
-                    Liza - O Grande Show
+<main class="grid container grid-container-1">
+    <!-- Seção de descrição -->
+    <section class="description" id="description">
+        <div class="title">
+            {{ event.title }}
+        </div>
+        <ul>
+            <li class="desc-list">
+                <img src="{% static 'icons/calendar.svg' %}" alt="">
+                <span>{{ event.date }}</span>
+            </li>
+            <li class="desc-list">
+                <img src="{% static 'icons/clock.svg' %}" alt="">
+                <span>{{ event.time }}</span>
+            </li>
+            <li class="desc-list">
+                <img src="{% static 'icons/map-pin.svg' %}" alt="">
+                <span>{{ event.location }}</span>
+            </li>
+            <li class="desc-list">
+                <img src="{% static 'icons/people.svg' %}" alt="">
+                <span>Lotação: {{ event.max_capacity }} pessoas</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- Imagem promocional -->
+    <section class="promo-image" id="promo-image">
+        <div>
+            <img src="{% static 'promo-image.svg' %}" alt="">
+        </div>
+    </section>
+
+    <!-- Formulário de compra -->
+    <form method="POST">
+        {% csrf_token %}
+        <section class="tickets-menu" id="tickets-menu">
+            <div class="menu-wrapper">
+                <div class="title">Ingressos por Setor</div>
+                <div class="tickets">
+                    {% for setor in setores %}
+                        <div class="flex ticket {% if disponibilidades|get_item:setor.id == 0 %}esgotado{% endif %}">
+                            <div>{{ setor.title }} 
+                                <span style="font-size: 0.9rem; color: gray;">
+                                    ({{ disponibilidades|get_item:setor.id }} disponíveis)
+                                </span>
+                            </div>
+                            <div class="flex counter">
+                                <button type="button" class="btn-" onclick="decrease('{{ setor.id }}')">-</button>
+                                <div id="count_{{ setor.id }}">0</div>
+                                <button type="button" class="btn+" onclick="increase('{{ setor.id }}', {{ disponibilidades|get_item:setor.id }})">+</button>
+                            </div>
+                            <input type="hidden" name="setor_{{ setor.id }}" id="input_{{ setor.id }}" value="0">
+                        </div>
+                    {% empty %}
+                        <p>Nenhum setor disponível neste evento.</p>
+                    {% endfor %}
                 </div>
-                <ul>
-                    <li class="desc-list">
-                        <img src="{% static 'icons/calendar.svg' %}" alt="">
-                        <span>Data</span>
-                    </li>
-                    <li class="desc-list">
-                        <img src="{% static 'icons/clock.svg' %}" alt="">
-                        <span>Dia do mês e horário</span>
-                    </li>
-                    <li class="desc-list">
-                        <img src="{% static 'icons/map-pin.svg' %}" alt="">
-                        <span>Senac Music Hall - Brasília, DF</span>
-                    </li>
-                    <li class="desc-list">
-                        <img src="{% static 'icons/people.svg' %}" alt="">
-                        <span>Lotação: 5000 pessoas</span>
-                    </li>
-                </ul>
-            </section>
+            </div>
+            <button class="button" type="submit">
+                Reservar Ingressos
+            </button>
+        </section>
+    </form>
 
-            <section class="promo-image" id="promo-image">
-                <div>
-                    <img src="{% static 'promo-image.svg' %}" alt="">
-                </div>
-            </section>
-
-            <section class="tickets-menu" id="tickets-menu">
-                <div class="menu-wrapper">
-                    <div class="title">
-                        Plateia
-                    </div>
-                    <div class="tickets">
-                        <div class="track-ticket flex ticket">
-                            <div>
-                                Plateia central
-                            </div>
-                            <div class="flex counter">
-                                <button class="btn-">
-                                    -
-                                </button>
-                                <div>
-                                    0
-                                </div>
-                                <button class="btn+">
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                        <div class="side-1-ticket flex ticket">
-                            <div>
-                                Área Lateral 1
-                            </div>
-                            <div class="flex counter">
-                                <button class="btn-">
-                                    -
-                                </button>
-                                <div>
-                                    0
-                                </div>
-                                <button class="btn+">
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                        <div class="side-2-ticket flex ticket">
-                            <div>
-                                Área Lateral 2
-                            </div>
-                            <div class="flex counter">
-                                <button class="btn-">
-                                    -
-                                </button>
-                                <div>
-                                    0
-                                </div>
-                                <button class="btn+">
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                        <div class="front-ticket flex ticket">
-                            <div>
-                                Área VIP
-                            </div>
-                            <div class="flex counter">
-                                <button class="btn-">
-                                    -
-                                </button>
-                                <div>
-                                    0
-                                </div>
-                                <button class="btn+">
-                                    +
-                                </button>
-                            </div>
-                        </div>
-                        <div class="accessibility-ticket flex ticket">
-                            <div>
-                                Área Acessível
-                            </div>
-                            <div class="flex counter">
-                                <button class="btn-">
-                                    -
-                                </button>
-                                <div>
-                                    0
-                                </div>
-                                <button class="btn+">
-                                    +
-                                </button>
-                            </div>
+    <!-- Mapa de setores -->
+    <section class="sectors-map" id="sectors-map">
+        <div class="sectors-map-wrapper">
+            <div class="grid-sectors">
+                {% for setor in setores %}
+                    <div class="area {% if disponibilidades|get_item:setor.id == 0 %}esgotado{% endif %}">
+                        <div class="flex flex-area" style="justify-content: space-between;">
+                            <span>{{ setor.title }}</span>
+                            <span>{{ disponibilidades|get_item:setor.id }}</span>
                         </div>
                     </div>
-                </div>
-                <button class="button">
-                    Reservar Ingressos
-                </button>
-            </section>
+                {% endfor %}
+            </div>
+            <div class="stage">PALCO</div>
+        </div>
 
-            <section class="sectors-map" id="sectors-map">
-                <div class="sectors-map-wrapper">
-                    <div class="grid grid-container-2">
-                        <div class="track area">
-                            <div class="flex flex-area">
-                                <span>Plateia central</span>
-                                <span>3000</span>
-                            </div>
-                        </div>
-                        <div class="side-2 area">
-                            <div class="flex flex-area">
-                                <span>Área lateral 2</span>
-                                <span>700</span>                               
-                            </div>
-                        </div>
-                        <div class="side-1 area">
-                            <div class="flex flex-area">
-                                <span>Área lateral 1</span>
-                                <span>700</span>
-                            </div>
-                        </div>
-                        <div class="front flex area">
-                            <div class="accessibility-wrapper flex">
-                                <img src="{% static 'icons/accessibility.svg' %}" alt="">
-                                <img src="{% static 'icons/accessibility.svg' %}" alt="">
-                            </div>
-                            <div class="flex flex-area">
-                                <span>Área VIP</span>
-                                <span>600</span>
-                            </div>
-                        </div>
-                        <div class="stage area">
-                            Palco
-                        </div>
-                    </div>
-                    <div class="flex status-wrapper">
-                        <div>
-                            <img src="{% static 'icons/green-circle.svg' %}" alt="">
-                            <span>Disponível</span>
-                        </div>
-                        <div>
-                            <img src="{% static 'icons/gray-circle.svg' %}" alt="">
-                            <span>Esgotado</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </body>
+        <div class="flex status-wrapper">
+            <div><img src="{% static 'icons/green-circle.svg' %}" alt=""><span>Disponível</span></div>
+            <div><img src="{% static 'icons/gray-circle.svg' %}" alt=""><span>Esgotado</span></div>
+        </div>
+    </section>
 
 
+
+</main>
+
+<script>
+function increase(id, max) {
+    const input = document.getElementById('input_' + id);
+    const count = document.getElementById('count_' + id);
+    let value = parseInt(input.value);
+    if (value < max) {
+        input.value = value + 1;
+        count.innerText = value + 1;
+    }
+}
+
+function decrease(id) {
+    const input = document.getElementById('input_' + id);
+    const count = document.getElementById('count_' + id);
+    let value = parseInt(input.value);
+    if (value > 0) {
+        input.value = value - 1;
+        count.innerText = value - 1;
+    }
+}
+</script>
 {% endblock %}

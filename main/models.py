@@ -52,12 +52,12 @@ class Sector(models.Model):
 
 
 
-    
-    
-class Ticket (models.Model):
+class Ticket(models.Model):
     ticket_code = models.CharField(max_length=36)
     Event_id = models.ForeignKey(Event, on_delete=models.CASCADE)
     User_cpf = models.CharField(max_length=50)
+    sector = models.ForeignKey(Sector, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.ticket_code
+
