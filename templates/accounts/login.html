@@ -20,35 +20,33 @@
                 Faça seu login
             </h1>
 
-            <form action="post" enctype="multipart/form-data">
+            <form method="post" action="{% url 'login' %}" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="login-container">
                     <fieldset class="login-credentials">
                         <div class="input-wrapper">
-                            <label for="credential">
+                            <label for="id_username">
                                 Insira seu CPF ou E-mail:
                             </label>
-                            <input type="text" id="credential" name="credential" placeholder="CPF ou E-mail">
+                            <input type="text" id="id_username" name="username" placeholder="CPF ou E-mail" required>
                         </div>
                         <div class="input-wrapper">
-                            <label for="password">
+                            <label for="id_password">
                                 Senha:
                             </label>
-                            <input type="password" name="password" id="password" placeholder="Senha" minlength="8">
+                            <input type="password" name="password" id="id_password" placeholder="Senha" minlength="8" required>
                         </div>
                     </fieldset>
                 </div>
                 
                 <fieldset class="stay-conected">
-                    <div>
-                        <input type="checkbox" id="stay-conected">
-                        <label for="stay-conected">Mantenha-me conectado</label>
-                    </div>
-                    <!-- Deixa pra depois, isso talvez não dê tempo -->
-                    <div>
-                        <a href="#">Esqueci minha senha</a>
-                    </div>
+                    <!-- Campo opcional para "lembrar login" -->
+                    <label>
+                        <input type="checkbox" name="remember_me"> Manter conectado
+                    </label>
                 </fieldset>
-                <button>
+
+                <button type="submit">
                     Logar
                 </button>
             </form>

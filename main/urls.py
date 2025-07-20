@@ -6,14 +6,15 @@ from .views import *
 
 urlpatterns = [
     #visão admin
-    path('', EventsView, name='events_list'), #ver todos os eventos
-    path('event/create/', create_event, name='create_event'), #criar eventos
-    path('event/<int:event_id>/edit/', edit_event, name='edit_event'), #editar eventos
-    path('event/<int:event_id>/delete/', delete_event, name='delete_event'), #deletar eventos
-    
-    path('event/<int:event_id>/sector/add/', create_sector, name='create_sector'),
-    path('sector/<int:sector_id>/edit/', edit_sector, name='edit_sector'),
-    path('sector/<int:sector_id>/delete/', delete_sector, name='delete_sector'),
+    path('', EventsListView.as_view(), name='events_list'),
+    path('event/create/', EventCreateView.as_view(), name='create_event'),
+    path('event/<int:event_id>/edit/', EventUpdateView.as_view(), name='edit_event'),
+    path('event/<int:pk>/delete/', EventDeleteView.as_view(), name='delete_event'),
+
+    path('event/<int:event_id>/sector/add/', SectorCreateView.as_view(), name='create_sector'),
+    path('sector/<int:sector_id>/edit/', SectorUpdateView.as_view(), name='edit_sector'),
+    path('sector/<int:pk>/delete/', SectorDeleteView.as_view(), name='delete_sector'),
+
 
     
     
