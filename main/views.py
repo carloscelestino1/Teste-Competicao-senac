@@ -314,3 +314,24 @@ class EventDashboardView(LoginRequiredMixin, TemplateView):
 
         return context
 
+
+
+class EventTicketsListView(LoginRequiredMixin, ListView):
+    model = Ticket
+    template_name = 'main/event_tickets_list.html'
+    context_object_name = 'tickets'
+
+    def get_queryset(self):
+        event_id = self.kwargs.get('event_id')
+        return Ticket.objects.filter(Event_id=event_id).select_related('sector')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['event'] = Event.objects.get(pk=self.kwargs['event_id'])
+        return context
+    
+
+
+def ticket_detail_view(request, ticket_id):
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    return render(request, 'main/ticket_detail.html', {'ticket': ticket})

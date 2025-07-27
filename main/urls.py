@@ -20,6 +20,10 @@ urlpatterns = [
 
     #visão vendedor
     path('event/<int:event_id>/venda/', VendaIngressosView.as_view(), name='venda_ingressos'),
+    path('event/<int:event_id>/tickets/', views.EventTicketsListView.as_view(), name='event_tickets_list'),
+    path('ticket/<int:ticket_id>/', views.ticket_detail_view, name='ticket_detail'),
+
+
 
 ]
 
