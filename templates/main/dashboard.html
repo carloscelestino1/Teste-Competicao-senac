@@ -75,12 +75,27 @@
         background-color: #fff0ec;
     }
 
-    .bottom-row {
-        background-color: #fff;
-        padding: 1.5rem;
-        border-radius: 16px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    }
+.bottom-row {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 2rem;
+
+    /* NOVO: ocupa toda a linha e herda largura da row anterior */
+    display: block;
+    flex-basis: 100%;
+}
+
+
+.bottom-row canvas {
+    width: 100% !important;
+    max-width: 100%;
+    height: 380px !important;
+}
+
+
+
 
     .bottom-row h2 {
         font-size: 1.2rem;
@@ -94,10 +109,7 @@
         display: block;
     }
 
-    #columnchart canvas {
-        max-width: 100%;
-        min-height: 280px;
-    }
+
 
     header.flex {
         display: flex;
@@ -110,6 +122,35 @@
         font-size: 1.8rem;
         margin: 0;
     }
+
+    .full-width-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.columnchart {
+    width: 100%;
+    max-width: 100%;
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 2rem;
+}
+
+.columnchart h2 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.columnchart canvas {
+    width: 100% !important;
+    max-width: 100%;
+    height: 400px !important;
+}
+
 </style>
 
 <header class="flex">
@@ -147,10 +188,14 @@
     </div>
 
     <!-- Gráfico de Barras -->
-    <section class="bottom-row" id="columnchart">
-        <h2>% de Vendas por Setor</h2>
-        <canvas id="column"></canvas>
-    </section>
+<!-- Gráfico de Barras em container separado -->
+    <div class="full-width-row">
+        <section class="columnchart">
+            <h2>% de Vendas por Setor</h2>
+            <canvas id="column"></canvas>
+        </section>
+    </div>
+
 </main>
 
 <!-- Scripts -->
