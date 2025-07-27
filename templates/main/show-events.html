@@ -130,6 +130,13 @@
                                 <span>{{ event.date|date:"d/m/Y" }} às {{ event.start_at|time:"H:i" }}</span>
                             </div>
                         </div>
+                            <div style="text-align: center; margin-bottom: 1rem;">
+                            <a href="{% url 'event_dashboard' event.id %}"
+                            style="display: inline-block; padding: 6px 12px; background-color: #28a745; color: white;
+                                    font-weight: bold; border-radius: 6px; text-decoration: none;">
+                                Ver Dashboard
+                            </a>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

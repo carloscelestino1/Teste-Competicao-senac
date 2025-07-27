@@ -2,26 +2,21 @@
 
 .grid-container-3 {
     grid-template-areas: 
-    'bignum bignum piechart piechart'
-    'bignum bignum piechart piechart'
-    'map map piechart piechart'
-    'map map columnchart columnchart'
-    'map map columnchart columnchart'
-    'map map columnchart columnchart'
-    ;
+        'bignum bignum piechart columnchart'
+        'map map piechart columnchart'
+        'map map piechart columnchart';
     grid-template-columns: repeat(4, 1fr);
-
     gap: 0.5rem;
 }
 
-@media (max-width: 48rem) {
+
+@media (max-width: 768px) {
     .grid-container-3 {
         grid-template-areas:
-        'bignum'
-        'map'
-        'piechart'
-        'columnchart'
-        ;
+            'bignum'
+            'map'
+            'piechart'
+            'columnchart';
         grid-template-columns: 1fr;
     }
 }

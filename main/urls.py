@@ -15,7 +15,7 @@ urlpatterns = [
     path('sector/<int:sector_id>/edit/', SectorUpdateView.as_view(), name='edit_sector'),
     path('sector/<int:pk>/delete/', SectorDeleteView.as_view(), name='delete_sector'),
     path('event/<int:event_id>/acesso/', event_router_view, name='event_access'),
-    path('dashboard/', views.EventDashboardView, name='dashboard'),
+    path('event/<int:event_id>/dashboard/', views.EventDashboardView.as_view(), name='event_dashboard'),
     path('event/<int:event_id>/validar-ingresso/', TicketValidationView.as_view(), name='validar_ingresso'),
 
     #visão vendedor

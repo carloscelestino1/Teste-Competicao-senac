@@ -1,159 +1,197 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_tags %}
 
 {% block content %}
-    <link rel="stylesheet" href="{% static 'styles/main/dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'styles/main/dashboard.css' %}">
 
-    <body>
-        <header class="flex">
-            <a href="http://127.0.0.1:8000/">
-                <img src="{% static 'icons/back.svg' %}" alt="">
-            </a>
-            <h1>
-                Dashboard:
-            </h1>
-        </header>
-        <main class="container grid grid-container-3">
-            <section id="bignum">
-                <div class="cards-wrapper flex">
-                    <div class="available-tickets flex flex-flow-column">
-                        <div>
-                            Ingressos Disponíveis
-                        </div>
-                        <div class="card flex">
-                            2800
-                        </div>
-                    </div>
-                    <div class="reserved-tickets flex flex-flow-column">
-                        <div>
-                            Ingressos Reservados
-                        </div>
-                        <div class="card flex">
-                            2200
-                        </div>
-                    </div>
+<style>
+    .dashboard-wrapper {
+        padding: 2rem;
+        background-color: #f9faff;
+    }
+
+    .top-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+
+    .card-section,
+    .chart-section {
+        background-color: #fff;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        flex: 1;
+        min-width: 320px;
+    }
+
+    .card-section h2,
+    .chart-section h2 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .cards-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .card {
+        font-size: 1.1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 4px;
+    }
+
+    .available {
+        color: #00ca07;
+        border: 2px solid #00ca07;
+        background-color: #ecfff0;
+    }
+
+    .reserved {
+        color: #f44528;
+        border: 2px solid #f44528;
+        background-color: #fff0ec;
+    }
+
+    .bottom-row {
+        background-color: #fff;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .bottom-row h2 {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    canvas {
+        width: 100% !important;
+        height: auto !important;
+        display: block;
+    }
+
+    #columnchart canvas {
+        max-width: 100%;
+        min-height: 280px;
+    }
+
+    header.flex {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 1rem 2rem;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+        margin: 0;
+    }
+</style>
+
+<header class="flex">
+    <a href="{% url 'events_list' %}">
+        <img src="{% static 'icons/back.svg' %}" alt="Voltar">
+    </a>
+    <h1>Dashboard: {{ event.title }}</h1>
+</header>
+
+<main class="dashboard-wrapper">
+
+    <div class="top-row">
+
+        <!-- Resumo -->
+        <section class="card-section">
+            <h2>Resumo de Ingressos</h2>
+            <div class="cards-wrapper">
+                <div class="card available">
+                    <div>Ingressos Disponíveis</div>
+                    <div class="card-value">{{ disponiveis }}</div>
                 </div>
-                
-            </section>
-
-            <section id="piechart">
-                <div>
-                    <canvas id="pie"></canvas>
+                <div class="card reserved">
+                    <div>Ingressos Reservados</div>
+                    <div class="card-value">{{ emitidos }}</div>
                 </div>
-                
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            </div>
+        </section>
 
-                <script>
-                    const ctx2 = document.getElementById('pie');
+        <!-- Gráfico de Pizza -->
+        <section class="chart-section">
+            <h2>Distribuição de Ingressos</h2>
+            <canvas id="pie"></canvas>
+        </section>
 
-                    const data = {
-                        labels: [
-                            '% Disponíveis',
-                            '% Reservados',
-                        ],
-                        datasets: [{
-                            label: 'Porcentagem',
-                            data: [55, 45],
-                            backgroundColor: [
-                            '#00CA07',
-                            '#F44528'
-                            ],
-                            hoverOffset: 4
-                        }]
-                    };
+    </div>
 
-                        const config = {
-                            type: 'doughnut',
-                            data: data,
-                        };
+    <!-- Gráfico de Barras -->
+    <section class="bottom-row" id="columnchart">
+        <h2>% de Vendas por Setor</h2>
+        <canvas id="column"></canvas>
+    </section>
+</main>
 
-                    new Chart(ctx2, config);
-                </script>
-                
-            </section>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfico de Pizza
+    const ctx2 = document.getElementById('pie');
+    new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: ['% Disponíveis', '% Reservados'],
+            datasets: [{
+                label: 'Porcentagem',
+                data: [{{ percent_disponiveis }}, {{ percent_emitidos }}],
+                backgroundColor: ['#00CA07', '#F44528'],
+                hoverOffset: 4
+            }]
+        }
+    });
 
-            <section id="map">
-                <div class="sectors-map-wrapper">
-                    <div class="grid grid-container-2">
-                        <div class="track area">
-                            <div class="flex flex-area">
-                                <span>Plateia central</span>
-                                <span>3000</span>
-                            </div>
-                        </div>
-                        <div class="side-2 area">
-                            <div class="flex flex-area">
-                                <span>Área lateral 2</span>
-                                <span>700</span>                               
-                            </div>
-                        </div>
-                        <div class="side-1 area">
-                            <div class="flex flex-area">
-                                <span>Área lateral 1</span>
-                                <span>700</span>
-                            </div>
-                        </div>
-                        <div class="front flex area">
-                            <div class="accessibility-wrapper flex">
-                                <img src="{% static 'icons/accessibility.svg' %}" alt="">
-                                <img src="{% static 'icons/accessibility.svg' %}" alt="">
-                            </div>
-                            <div class="flex flex-area">
-                                <span>Área VIP</span>
-                                <span>600</span>
-                            </div>
-                        </div>
-                        <div class="stage area">
-                            Palco
-                        </div>
-                    </div>
-                    <div class="flex status-wrapper">
-                        <div>
-                            <img src="{% static 'icons/green-circle.svg' %}" alt="">
-                            <span>Disponível</span>
-                        </div>
-                        <div>
-                            <img src="{% static 'icons/gray-circle.svg' %}" alt="">
-                            <span>Esgotado</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="columnchart">
-                <div>
-                    <canvas id="column"></canvas>
-                </div>
-
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-                <script>
-                const ctx = document.getElementById('column');
-
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                    labels: ['Plateia central', 'Área lateral 1', 'Área VIP', 'Área lateral 2'],
-                    datasets: [{
-                        label: '% de Vendas por Setor',
-                        data: [80, 19, 52, 27],
-                        backgroundColor: '#F44528',
-                        borderWidth: 1
-                    }]
-                    },
-                    options: {
-                    scales: {
-                        y: {
-                        beginAtZero: true,
-                        max: 100
-                        }
-                    }
-                   }
-                });
-                </script>
-            </section>
-        </main>
-
-    </body>
-
+    // Gráfico de Barras
+    const ctx = document.getElementById('column');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ labels|safe }},
+            datasets: [{
+                label: '% de Vendas por Setor',
+                data: {{ percentuais|safe }},
+                backgroundColor: '#F44528',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
