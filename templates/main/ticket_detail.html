@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+={% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
@@ -16,7 +16,7 @@
 .ticket-code-vertical {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    font-size: 0.5rem;  /* tamanho reduzido */
+    font-size: 0.5rem;
     font-weight: bold;
     border: 2px solid #000;
     padding: 1rem 0.5rem;
@@ -28,7 +28,6 @@
     margin-right: 1rem;
     white-space: nowrap;
 }
-
 
 .ticket-image {
     flex: 0 0 150px;
@@ -60,20 +59,33 @@
 .ticket-info div {
     margin-bottom: 0.5rem;
 }
+
+.actions {
+    text-align: center;
+    margin-top: 2rem;
+}
+.actions button {
+    padding: 0.6rem 1.2rem;
+    background-color: #0d6efd;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
 </style>
 
-<div class="ticket-container">
-    <!-- Código do ingresso em vertical -->
+<!-- Ingresso renderizado -->
+<div id="ticket" class="ticket-container">
     <div class="ticket-code-vertical">
         {{ ticket.ticket_code }}
     </div>
 
-    <!-- Imagem do evento -->
     <div class="ticket-image">
         <img src="{{ ticket.Event_id.image.url }}" alt="{{ ticket.Event_id.title }}">
     </div>
 
-    <!-- Informações do evento -->
     <div class="ticket-info">
         <div><strong>Evento:</strong> {{ ticket.Event_id.title }}</div>
         <div><strong>Data:</strong> {{ ticket.Event_id.date|date:"d/m/Y" }} {{ ticket.Event_id.start_at }}</div>
@@ -82,7 +94,23 @@
     </div>
 </div>
 
-<a href="{% url 'event_tickets_list' ticket.Event_id.id %}" style="display: block; text-align: center; margin-top: 1rem; font-weight: 600; color: #0d6efd;">
-    ← Voltar para lista de ingressos
-</a>
+<!-- Ações -->
+<div class="actions">
+    <button onclick="baixarIngresso()">📥 Baixar Ingresso</button><br>
+    <a href="{% url 'event_tickets_list' ticket.Event_id.id %}">← Voltar para lista de ingressos</a>
+</div>
+
+<!-- Script: html2canvas -->
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+function baixarIngresso() {
+    const ingresso = document.getElementById('ticket');
+    html2canvas(ingresso).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'ingresso_{{ ticket.id }}.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+}
+</script>
 {% endblock %}
