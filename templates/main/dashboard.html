@@ -11,6 +11,18 @@
         background-color: #f9faff;
     }
 
+    header.flex {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 1rem 2rem;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+        margin: 0;
+    }
+
     .top-row {
         display: flex;
         flex-wrap: wrap;
@@ -30,7 +42,8 @@
     }
 
     .card-section h2,
-    .chart-section h2 {
+    .chart-section h2,
+    .columnchart h2 {
         font-size: 1.2rem;
         font-weight: bold;
         margin-bottom: 1rem;
@@ -75,82 +88,31 @@
         background-color: #fff0ec;
     }
 
-.bottom-row {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-top: 2rem;
+    .full-width-row {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
 
-    /* NOVO: ocupa toda a linha e herda largura da row anterior */
-    display: block;
-    flex-basis: 100%;
-}
+    .columnchart {
+        width: 100%;
+        max-width: 100%;
+        background-color: #fff;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-top: 2rem;
+    }
 
-
-.bottom-row canvas {
-    width: 100% !important;
-    max-width: 100%;
-    height: 380px !important;
-}
-
-
-
-
-    .bottom-row h2 {
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
+    .columnchart canvas {
+        width: 100% !important;
+        max-width: 100%;
+        height: 400px !important;
     }
 
     canvas {
-        width: 100% !important;
-        height: auto !important;
         display: block;
     }
-
-
-
-    header.flex {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 1rem 2rem;
-    }
-
-    header h1 {
-        font-size: 1.8rem;
-        margin: 0;
-    }
-
-    .full-width-row {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-
-.columnchart {
-    width: 100%;
-    max-width: 100%;
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-top: 2rem;
-}
-
-.columnchart h2 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.columnchart canvas {
-    width: 100% !important;
-    max-width: 100%;
-    height: 400px !important;
-}
-
 </style>
 
 <header class="flex">
@@ -163,7 +125,6 @@
 <main class="dashboard-wrapper">
 
     <div class="top-row">
-
         <!-- Resumo -->
         <section class="card-section">
             <h2>Resumo de Ingressos</h2>
@@ -184,26 +145,22 @@
             <h2>Distribuição de Ingressos</h2>
             <canvas id="pie"></canvas>
         </section>
-
     </div>
 
     <!-- Gráfico de Barras -->
-<!-- Gráfico de Barras em container separado -->
     <div class="full-width-row">
         <section class="columnchart">
             <h2>% de Vendas por Setor</h2>
             <canvas id="column"></canvas>
         </section>
     </div>
-
 </main>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Gráfico de Pizza
-    const ctx2 = document.getElementById('pie');
-    new Chart(ctx2, {
+    new Chart(document.getElementById('pie'), {
         type: 'doughnut',
         data: {
             labels: ['% Disponíveis', '% Reservados'],
@@ -217,8 +174,7 @@
     });
 
     // Gráfico de Barras
-    const ctx = document.getElementById('column');
-    new Chart(ctx, {
+    new Chart(document.getElementById('column'), {
         type: 'bar',
         data: {
             labels: {{ labels|safe }},
