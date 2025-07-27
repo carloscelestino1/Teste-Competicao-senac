@@ -50,10 +50,16 @@ class Sector(models.Model):
 
 
 class Ticket(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('realizado', 'Realizado'),
+    ]
+
     ticket_code = models.CharField(max_length=36)
     Event_id = models.ForeignKey(Event, on_delete=models.CASCADE)
     User_cpf = models.CharField(max_length=50)
     sector = models.ForeignKey(Sector, on_delete=models.CASCADE, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
 
     def __str__(self):
         return self.ticket_code

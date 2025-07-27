@@ -65,3 +65,10 @@ class SectorForm(forms.ModelForm):
         soma = sum(s.max_capacity for s in setores)
         if self.event and max_capacity and soma + max_capacity > self.event.max_capacity:
             self.add_error('max_capacity', 'Capacidade total dos setores excede a capacidade máxima do evento.')
+
+
+class TicketValidationForm(forms.Form):
+    ticket_code = forms.CharField(
+        label="Código do Ingresso",
+        widget=forms.TextInput(attrs={'class': 'input-field', 'placeholder': 'Digite o código do ingresso'})
+    )

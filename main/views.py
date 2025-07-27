@@ -1,36 +1,28 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Event, EventAdress, Sector
-from .forms import EventForm, EventAdressForm, SectorForm
+from .forms import EventForm, EventAdressForm, SectorForm, TicketValidationForm
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseRedirect
 import uuid
-
-
-
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
-from django.shortcuts import get_object_or_404, redirect, render
 from .models import Event, Sector, Ticket
+from datetime import date
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, get_object_or_404
-from .models import Event
 
+@login_required
 @login_required
 def event_router_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
+    if request.user.groups.filter(name__iexact='validador').exists():
+        return redirect('validar_ingresso', event_id=event.id)
+
     if request.user.groups.filter(name__iexact='vendedor').exists():
         return redirect('venda_ingressos', event_id=event.id)
-    
+
     return redirect('edit_event', event_id=event.id)
-
-
 
 
 
@@ -212,6 +204,54 @@ class VendaIngressosView(LoginRequiredMixin, View):
                 )
 
         return redirect('venda_ingressos', event_id=event.id)
+
+
+class TicketValidationView(LoginRequiredMixin, View):
+    template_name = 'main/ticket_validation.html'
+    form_class = TicketValidationForm
+
+    def get(self, request, event_id):
+        if not request.user.groups.filter(name__iexact='validador').exists():
+            return redirect('events_list')
+
+        form = self.form_class()
+        event = get_object_or_404(Event, id=event_id)
+        return render(request, self.template_name, {
+            'form': form,
+            'event': event
+        })
+
+    def post(self, request, event_id):
+        if not request.user.groups.filter(name__iexact='validador').exists():
+            return redirect('events_list')
+
+        form = self.form_class(request.POST)
+        validation_result = None
+        event = get_object_or_404(Event, id=event_id)
+
+        if form.is_valid():
+            ticket_code = form.cleaned_data['ticket_code']
+            ticket = Ticket.objects.filter(ticket_code=ticket_code, Event_id=event).first()
+
+            if not ticket:
+                validation_result = "Ingresso não encontrado para este evento."
+            elif ticket.status == 'realizado':
+                validation_result = "Ingresso já foi validado."
+            elif ticket.Event_id.date != date.today():
+                validation_result = "O ingresso não é válido para hoje."
+            else:
+                ticket.status = 'realizado'
+                ticket.save()
+                validation_result = "✅ Ingresso validado com sucesso."
+
+        return render(request, self.template_name, {
+            'form': form,
+            'validation_result': validation_result,
+            'event': event
+        })
+
+
+
 
 
 
