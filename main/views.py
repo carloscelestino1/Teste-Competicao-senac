@@ -265,49 +265,69 @@ from django.db.models import Count
 from .models import Event, Sector, Ticket
 from django.shortcuts import get_object_or_404
 
+from django.utils.dateparse import parse_date
+from django.db.models.functions import TruncMonth
+
 class EventDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'main/dashboard.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        request = self.request
         event_id = self.kwargs.get('event_id')
         event = get_object_or_404(Event, pk=event_id)
 
+        # Filtros GET
+        setor_id = request.GET.get('setor')
+
         setores = Sector.objects.filter(Event_id=event)
+        tickets_qs = Ticket.objects.filter(Event_id=event)
+
+        # Filtro por setor
+        if setor_id:
+            tickets_qs = tickets_qs.filter(sector_id=setor_id)
+            setores = setores.filter(id=setor_id)  # reduz visual dos gráficos
 
         total_maximo = sum(s.max_capacity for s in setores)
-        total_emitidos = Ticket.objects.filter(Event_id=event).count()
-        total_validados = Ticket.objects.filter(Event_id=event, status='realizado').count()
+        total_emitidos = tickets_qs.count()
+        total_validados = tickets_qs.filter(status='realizado').count()
         total_disponiveis = total_maximo - total_emitidos
 
         # Disponibilidades por setor
         disponibilidades = {}
-        for setor in setores:
-            vendidos = Ticket.objects.filter(Event_id=event, sector_id=setor.id).count()
-            disponibilidade = setor.max_capacity - vendidos
-            disponibilidades[setor.id] = disponibilidade
-        
         labels = []
-        percentuais = []
+        percentuais_pendentes = []
+        percentuais_realizados = []
 
         for setor in setores:
-            vendidos = Ticket.objects.filter(Event_id=event, sector_id=setor.id).count()
-            percentual = round((vendidos / setor.max_capacity) * 100, 2) if setor.max_capacity else 0
-            labels.append(setor.title)
-            percentuais.append(percentual)
+            vendidos = tickets_qs.filter(sector_id=setor.id).count()
+            pendentes = tickets_qs.filter(sector_id=setor.id, status='pendente').count()
+            realizados = tickets_qs.filter(sector_id=setor.id, status='realizado').count()
+            capacidade = setor.max_capacity or 1
 
-        context.update({
-            'labels': labels,
-            'percentuais': percentuais,
-            'event': event,
-            'setores': setores,
-            'disponibilidades': disponibilidades,
-            'emitidos': total_emitidos,
-            'validados': total_validados,
-            'disponiveis': total_disponiveis,
-            'percent_disponiveis': round((total_disponiveis / total_maximo) * 100, 2) if total_maximo else 0,
-            'percent_emitidos': round((total_emitidos / total_maximo) * 100, 2) if total_maximo else 0,
-        })
+            labels.append(setor.title)
+            percentuais_pendentes.append(round((pendentes / capacidade) * 100, 2))
+            percentuais_realizados.append(round((realizados / capacidade) * 100, 2))
+            total_pendentes = tickets_qs.filter(status='pendente').count()
+            total_realizados = tickets_qs.filter(status='realizado').count()
+
+
+            context.update({
+                'event': event,
+                'labels': labels,
+                'setores': Sector.objects.filter(Event_id=event),
+                'eventos': Event.objects.all(),
+                'disponibilidades': disponibilidades,
+                'emitidos': total_emitidos,
+                'validados': total_validados,
+                'disponiveis': total_disponiveis,
+                'percent_disponiveis': round((total_disponiveis / total_maximo) * 100, 2) if total_maximo else 0,
+                'percent_emitidos': round((total_emitidos / total_maximo) * 100, 2) if total_maximo else 0,
+                'percentuais_pendentes': percentuais_pendentes,
+                'percentuais_realizados': percentuais_realizados,
+                'total_pendentes': total_pendentes,
+                'total_realizados': total_realizados,
+            })
 
         return context
 

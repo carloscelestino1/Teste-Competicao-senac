@@ -23,6 +23,38 @@
         margin: 0;
     }
 
+    .filters-form {
+        margin-bottom: 2rem;
+    }
+
+    .filters-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 200px;
+    }
+
+    .filter-actions {
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .filter-actions button {
+        background-color: #0d6efd;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
     .top-row {
         display: flex;
         flex-wrap: wrap;
@@ -104,7 +136,8 @@
         margin-top: 2rem;
     }
 
-    .columnchart canvas {
+    .columnchart canvas,
+    .chart-section canvas {
         width: 100% !important;
         max-width: 100%;
         height: 400px !important;
@@ -113,6 +146,13 @@
     canvas {
         display: block;
     }
+
+    .validated {
+    color: #00A86B;
+    border: 2px solid #00A86B;
+    background-color: #e6fff2;
+}
+
 </style>
 
 <header class="flex">
@@ -123,6 +163,27 @@
 </header>
 
 <main class="dashboard-wrapper">
+
+    <!-- Filtros -->
+    <form method="get" class="filters-form">
+        <div class="filters-grid">
+
+            <div class="filter-group">
+                <label for="setor">Setor:</label>
+                <select id="setor" name="setor">
+                    <option value="">Todos</option>
+                    {% for s in setores %}
+                        <option value="{{ s.id }}" {% if request.GET.setor == s.id|stringformat:"s" %}selected{% endif %}>
+                            {{ s.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit">Filtrar</button>
+            </div>
+        </div>
+    </form>
 
     <div class="top-row">
         <!-- Resumo -->
@@ -137,20 +198,30 @@
                     <div>Ingressos Reservados</div>
                     <div class="card-value">{{ emitidos }}</div>
                 </div>
+                <div class="card validated">
+                    <div>Ingressos Validados</div>
+                    <div class="card-value">{{ validados }}</div>
+                </div>
             </div>
         </section>
 
-        <!-- Gráfico de Pizza -->
+        <!-- Gráfico de Pizza - Disponíveis vs Reservados -->
         <section class="chart-section">
             <h2>Distribuição de Ingressos</h2>
             <canvas id="pie"></canvas>
         </section>
+
+        <!-- Gráfico de Pizza - Status Geral -->
+        <section class="chart-section">
+            <h2>Distribuição Geral por Checkin</h2>
+            <canvas id="statusPie"></canvas>
+        </section>
     </div>
 
-    <!-- Gráfico de Barras -->
+    <!-- Gráfico de Barras por Status por Setor -->
     <div class="full-width-row">
         <section class="columnchart">
-            <h2>% de Vendas por Setor</h2>
+            <h2>% de Vendas por Setor e Status</h2>
             <canvas id="column"></canvas>
         </section>
     </div>
@@ -159,7 +230,7 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Gráfico de Pizza
+    // Gráfico de Pizza - Disponíveis vs Reservados
     new Chart(document.getElementById('pie'), {
         type: 'doughnut',
         data: {
@@ -173,23 +244,48 @@
         }
     });
 
-    // Gráfico de Barras
+    // Gráfico de Pizza - Status Geral
+    new Chart(document.getElementById('statusPie'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Pendentes', 'Realizados'],
+            datasets: [{
+                data: [{{ total_pendentes }}, {{ total_realizados }}],
+                backgroundColor: ['#F4C542', '#00A86B'],
+                hoverOffset: 4
+            }]
+        }
+    });
+
+    // Gráfico de Barras - Por Setor e Status
     new Chart(document.getElementById('column'), {
         type: 'bar',
         data: {
             labels: {{ labels|safe }},
-            datasets: [{
-                label: '% de Vendas por Setor',
-                data: {{ percentuais|safe }},
-                backgroundColor: '#F44528',
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    label: '% Pendentes',
+                    data: {{ percentuais_pendentes|safe }},
+                    backgroundColor: '#F4C542'
+                },
+                {
+                    label: '% Realizados',
+                    data: {{ percentuais_realizados|safe }},
+                    backgroundColor: '#00A86B'
+                }
+            ]
         },
         options: {
+            responsive: true,
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 100
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + "%";
+                        }
+                    }
                 }
             }
         }
