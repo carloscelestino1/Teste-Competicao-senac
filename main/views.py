@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DeleteView
+from django.views.generic import ListView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Event, EventAdress, Sector
 from .forms import EventForm, EventAdressForm, SectorForm, TicketValidationForm
@@ -250,23 +250,6 @@ class TicketValidationView(LoginRequiredMixin, View):
             'event': event
         })
 
-
-
-
-
-
-#---------------------------------
-
-from django.views.generic import TemplateView
-from .models import Event
-
-from django.views.generic import TemplateView
-from django.db.models import Count
-from .models import Event, Sector, Ticket
-from django.shortcuts import get_object_or_404
-
-from django.utils.dateparse import parse_date
-from django.db.models.functions import TruncMonth
 
 class EventDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'main/dashboard.html'
