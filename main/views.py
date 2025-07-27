@@ -12,7 +12,6 @@ from datetime import date
 
 
 @login_required
-@login_required
 def event_router_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
