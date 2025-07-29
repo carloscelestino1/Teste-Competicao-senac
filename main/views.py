@@ -92,10 +92,20 @@ class EventUpdateView(LoginRequiredMixin, View):
         })
 
 
-class EventDeleteView(LoginRequiredMixin, DeleteView):
-    model = Event
-    success_url = reverse_lazy('events_list')
 
+class EventDeleteView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        event = get_object_or_404(Event, pk=pk)
+        setores_associados = Sector.objects.filter(Event_id=event) 
+        return render(request, 'main/event_confirm_delete.html', {
+            'event': event,
+            'setores': setores_associados
+        })
+
+    def post(self, request, pk):
+        event = get_object_or_404(Event, pk=pk)
+        event.delete()
+        return redirect('events_list')  
 
 # CRUD de Setores
 
@@ -110,16 +120,26 @@ class SectorCreateView(LoginRequiredMixin, View):
 
     def post(self, request, event_id):
         event = get_object_or_404(Event, pk=event_id)
+
         form = SectorForm(request.POST)
         if form.is_valid():
             sector = form.save(commit=False)
             sector.Event_id = event
-            sector.save()
-            return redirect('edit_event', event_id=event.id)
+
+            total_capacity = sum(
+                s.max_capacity for s in Sector.objects.filter(Event_id=event)
+            )
+            if total_capacity + sector.max_capacity > event.max_capacity:
+                form.add_error('max_capacity', f'A soma das capacidades dos setores ({total_capacity + sector.max_capacity}) excede a capacidade do evento ({event.max_capacity}).')
+            else:
+                sector.save()
+                return redirect('edit_event', event_id=event.id)
+
         return render(request, 'main/sector_form.html', {
             'form': form,
             'event': event
         })
+
 
 
 class SectorUpdateView(LoginRequiredMixin, View):

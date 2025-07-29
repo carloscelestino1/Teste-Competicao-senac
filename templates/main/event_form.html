@@ -101,7 +101,6 @@
 
             <!-- Card 3: Setores -->
             {% if not creating %}
-            <!-- Card 3: Setores -->
             <div class="card">
                 <h2>Setores do Evento</h2>
                 <ul style="padding-left: 1rem;">
@@ -109,7 +108,7 @@
                         <li>
                             {{ sector.title }} ({{ sector.max_capacity }} vagas)
                             <a href="{% url 'edit_sector' sector.id %}">✏️</a>
-                            <a href="{% url 'delete_sector' sector.id %}" onclick="return confirm('Deseja remover este setor?')">🗑️</a>
+                            <a href="{% url 'delete_sector' sector.id %}">🗑️</a>
                         </li>
                     {% empty %}
                         <li>Nenhum setor cadastrado.</li>
@@ -130,7 +129,7 @@
 
     {% if event_form.instance.pk and not creating %}
         <div class="delete-button-wrapper">
-            <a href="{% url 'delete_event' event_form.instance.pk %}" class="delete-button" onclick="return confirm('Tem certeza que deseja excluir este evento?');">
+            <a href="{% url 'delete_event' event_form.instance.pk %}" class="delete-button">
                 Excluir Evento
             </a>
         </div>

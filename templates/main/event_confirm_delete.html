@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-body">
+      <h2>Confirmação de Exclusão</h2>
+      <p>Você está prestes a excluir o evento <strong>{{ event.title }}</strong>.</p>
+
+      {% if setores %}
+        <p><strong>Atenção:</strong> Este evento possui {{ setores.count }} setor(es) associado(s). Ao excluir o evento, todos os setores relacionados também serão removidos.</p>
+        <ul>
+          {% for setor in setores %}
+            <li>{{ setor.title }} ({{ setor.max_capacity }} vagas)</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <p>Deseja continuar com a exclusão?</p>
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sim, excluir evento e setores</button>
+        <a href="{% url 'edit_event' event_id=event.id %}" class="btn btn-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+{% endblock %}
