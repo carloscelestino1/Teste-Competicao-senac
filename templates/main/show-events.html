@@ -95,9 +95,12 @@
     <link rel="stylesheet" href="{% static 'styles/main/show-events.css' %}">
 
     <main class="container">
-        <div class="add-event-button">
-            <a href="{% url 'create_event' %}">+ Adicionar Evento</a>
-        </div>
+        {% if request.user.is_superuser %}
+            <div class="add-event-button">
+                <a href="{% url 'create_event' %}">+ Adicionar Evento</a>
+            </div>
+        {% endif %}
+
 
         <div class="carousel-container">
             <h2>Eventos Cadastrados</h2>
