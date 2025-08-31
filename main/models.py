@@ -62,6 +62,11 @@ class Ticket(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
+    # Novos campos do cliente
+    cpf_cliente = models.CharField(max_length=11, verbose_name="CPF do Cliente", blank=True)
+    nome_cliente = models.CharField(max_length=150, verbose_name="Nome do Cliente", blank=True)
+    email_cliente = models.EmailField(verbose_name="Email do Cliente", blank=True)
+
     def __str__(self):
         return self.ticket_code
 

@@ -61,19 +61,33 @@
         font-weight: 600;
         color: #0d6efd;
     }
+
+    #ticketFilter {
+        border: 1px solid #ccc;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        width: 50%;
+        margin-bottom: 1rem;
+    }
 </style>
 
 <div class="card-wrapper">
     <a class="back-button" href="{% url 'events_list' %}">&larr; Voltar para lista de eventos</a>
     <h1>Ingressos do Evento: {{ event.title }}</h1>
 
-    <table>
+    <!-- 🔍 Filtro no front -->
+    <input type="text" id="ticketFilter" placeholder="Filtrar por cliente, email ou CPF">
+
+    <table id="ticketsTable">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Setor</th>
                 <th>Status</th>
                 <th>Código</th>
+                <th>Cliente</th>
+                <th>Email do Cliente</th>
+                <th>CPF de Cliente</th>
                 <th>Data</th>
             </tr>
         </thead>
@@ -87,15 +101,37 @@
                     <a href="{% url 'ticket_detail' ticket.id %}" style="text-decoration: none; color: #0d6efd; font-weight: 600;">
                         {{ ticket.ticket_code }}
                     </a>
-                    </td>
+                </td>
+                <td>{{ ticket.nome_cliente }}</td>
+                <td>{{ ticket.email_cliente }}</td>
+                <td>{{ ticket.cpf_cliente }}</td>
                 <td>{{ ticket.created_at|date:"d/m/Y H:i" }}</td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">Nenhum ingresso encontrado.</td>
+                <td colspan="8">Nenhum ingresso encontrado.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<script>
+document.getElementById("ticketFilter").addEventListener("keyup", function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#ticketsTable tbody tr");
+
+    rows.forEach(row => {
+        const nome = row.querySelector("td:nth-child(5)")?.innerText.toLowerCase() || "";
+        const email = row.querySelector("td:nth-child(6)")?.innerText.toLowerCase() || "";
+        const cpf = row.querySelector("td:nth-child(7)")?.innerText.toLowerCase() || "";
+
+        if (nome.includes(filter) || email.includes(filter) || cpf.includes(filter)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
+</script>
 {% endblock %}

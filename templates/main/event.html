@@ -48,37 +48,48 @@
         </div>
     </section>
 
-    <!-- Formulário de compra -->
-    <form method="POST">
-        {% csrf_token %}
-        <section class="tickets-menu" id="tickets-menu">
-            <div class="menu-wrapper">
-                <div class="title">Ingressos por Setor</div>
-                <div class="tickets">
-                    {% for setor in setores %}
-                        <div class="flex ticket {% if disponibilidades|get_item:setor.id == 0 %}esgotado{% endif %}">
-                            <div>{{ setor.title }} 
-                                <span style="font-size: 0.9rem; color: gray;">
-                                    ({{ disponibilidades|get_item:setor.id }} disponíveis)
-                                </span>
-                            </div>
-                            <div class="flex counter">
-                                <button type="button" class="btn-" onclick="decrease('{{ setor.id }}')">-</button>
-                                <div id="count_{{ setor.id }}">0</div>
-                                <button type="button" class="btn+" onclick="increase('{{ setor.id }}', {{ disponibilidades|get_item:setor.id }})">+</button>
-                            </div>
-                            <input type="hidden" name="setor_{{ setor.id }}" id="input_{{ setor.id }}" value="0">
+<!-- Formulário de compra -->
+<form method="POST">
+    {% csrf_token %}
+    <section class="tickets-menu" id="tickets-menu">
+        <div class="menu-wrapper">
+            <div class="title">Ingressos por Setor</div>
+            <div class="tickets">
+                {% for setor in setores %}
+                    <div class="flex ticket {% if disponibilidades|get_item:setor.id == 0 %}esgotado{% endif %}">
+                        <div>{{ setor.title }} 
+                            <span style="font-size: 0.9rem; color: gray;">
+                                ({{ disponibilidades|get_item:setor.id }} disponíveis)
+                            </span>
                         </div>
-                    {% empty %}
-                        <p>Nenhum setor disponível neste evento.</p>
-                    {% endfor %}
-                </div>
+                        <div class="flex counter">
+                            <button type="button" class="btn-" onclick="decrease('{{ setor.id }}')">-</button>
+                            <div id="count_{{ setor.id }}">0</div>
+                            <button type="button" class="btn+" onclick="increase('{{ setor.id }}', {{ disponibilidades|get_item:setor.id }})">+</button>
+                        </div>
+                        <input type="hidden" name="setor_{{ setor.id }}" id="input_{{ setor.id }}" value="0">
+                    </div>
+                {% empty %}
+                    <p>Nenhum setor disponível neste evento.</p>
+                {% endfor %}
             </div>
-            <button class="button" type="submit">
-                Reservar Ingressos
-            </button>
-        </section>
-    </form>
+        </div>
+
+        <!-- Campos do cliente -->
+        <div class="menu-wrapper" style="margin-top: 2rem;">
+            <div class="title">Dados do Cliente</div>
+            <div class="flex-column" style="display: flex; flex-direction: column; gap: 1rem;">
+                <input type="text" name="nome_cliente" placeholder="Nome completo" required class="form-control">
+                <input type="email" name="email_cliente" placeholder="Email" required class="form-control">
+                <input type="text" name="cpf_cliente" placeholder="CPF (somente números)" maxlength="11" required class="form-control">
+            </div>
+        </div>
+
+        <button class="button" type="submit" style="margin-top: 2rem;">
+            Reservar Ingressos
+        </button>
+    </section>
+</form>
 
     <!-- Mapa de setores -->
     <section class="sectors-map" id="sectors-map">

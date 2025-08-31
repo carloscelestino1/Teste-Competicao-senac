@@ -207,19 +207,27 @@ class VendaIngressosView(LoginRequiredMixin, View):
     def post(self, request, event_id):
         event, setores, capacidade_disponivel = self.get_event_and_setores(event_id)
 
+        # captura dados do cliente
+        nome_cliente = request.POST.get("nome_cliente")
+        email_cliente = request.POST.get("email_cliente")
+        cpf_cliente = request.POST.get("cpf_cliente")
+
         for setor in setores:
             quantidade = int(request.POST.get(f'setor_{setor.id}', 0))
             capacidade = capacidade_disponivel[setor.id]
 
             if quantidade > capacidade:
-                continue  # aqui você pode adicionar mensagens de erro com messages.error
+                continue  # aqui você pode adicionar messages.error
 
             for _ in range(quantidade):
                 Ticket.objects.create(
                     ticket_code=uuid.uuid4(),
                     Event_id=event,
-                    User_cpf=request.user.username,
-                    sector_id=setor.id
+                    User_cpf=request.user.username,  # mantém quem comprou/logado
+                    sector_id=setor.id,
+                    cpf_cliente=cpf_cliente,
+                    nome_cliente=nome_cliente,
+                    email_cliente=email_cliente,
                 )
 
         return redirect('venda_ingressos', event_id=event.id)
